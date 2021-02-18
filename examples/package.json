@@ -17,6 +17,7 @@
     "patrol-gb": "ts-node src/patrol GB",
     "patrol-sb": "ts-node src/patrol SB",
     "patrol-d2": "ts-node src/patrol D2",
+    "police-sm": "ts-node src/police SM",
     "wake-sm": "ts-node src/wake-sleep SM",
     "wake-sb": "ts-node src/wake-sleep SB",
     "wake": "ts-node src/wake-sleep",

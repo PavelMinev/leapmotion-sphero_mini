@@ -4,7 +4,8 @@
   "author": "igbopie",
   "workspaces": [
     "lib",
-    "examples"
+    "examples",
+    "src"
   ],
   "scripts": {
     "npm": "npm",
