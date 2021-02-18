@@ -4,6 +4,9 @@ const Scanner = require('spherov2.js').Scanner;
 
 const WAIT_TIME = 100;
 let spheroBall;
+let controller;
+let waitIntervalForNextCommandId;
+let isStopped = true;
 
 function getAngle(x, y) {
     return Math.acos(-y / Math.sqrt(Math.pow(x,2)+Math.pow(y, 2))) * 180 / Math.PI * (x <= 0 ? 1 : -1) + (x <= 0 ? 0 : 360);
@@ -23,7 +26,6 @@ const initConnections = async () => {
 
 const initLeapMotionConnection = () => {
     controller = Leap.loop({ frameEventName: 'deviceFrame', enableGestures: true });
-    debugger;
     console.log('waiting for Leap Motion connection...');
 
     controller.connect();
@@ -43,7 +45,10 @@ const initLeapMotionConnection = () => {
     controller.on('frame', frame => {
         const handsKeys = Object.keys(frame.handsMap);
         if (handsKeys[0]) {
+            // console.log(frame.handsMap);
             handleSwipe(frame.handsMap[handsKeys[0]]);
+        } else {
+            console.log('No hands');
         };
     });
 }
@@ -57,7 +62,7 @@ const handleSwipe = hand => {
     towardsBackwards += towardsBackwardsDeltaColibration;
     leftRight += leftRightDeltaColibration;
 
-    const maxSpeed = 70;
+    const maxSpeed = 100;
     const minLeft = 0.2;
     const minRight = -0.2;
     const minToward = -0.15;
@@ -93,17 +98,23 @@ const handleSwipe = hand => {
 
 const moveSphero = (direction, speed) => {
     console.log(direction, speed);
-    // if (speed !== 0 && !speed) {
-    //   speed = 70;
-    // } else if (speed === 0) {
-    //     stopSphero(spheroBall)
-    // }
-    // spheroBall.heading = direction;
-    // spheroBall.roll(speed, direction, 1);
+    isStopped = true;
+    if (speed !== 0 && !speed) {
+      speed = 70;
+    } else if (speed === 0) {
+        return stopSphero(spheroBall)
+    }
+    spheroBall.heading = direction;
+    spheroBall.roll(speed, direction, []);
 }
 
 const stopSphero = spheroBall => {
-    spheroBall.roll(0, spheroBall.heading || 0, 0);
+    if (isStopped) {
+        return;
+    }
+    console.log('Stop sphero');
+    isStopped = false;
+    spheroBall.roll(0, spheroBall.heading || 0, []);
 };
 
 module.exports = spheroModule;
